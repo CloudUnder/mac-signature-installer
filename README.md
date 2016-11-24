@@ -1,5 +1,8 @@
 # HTML Email Signature Installer for Mail.app (macOS)
 
+[![Build Status](https://travis-ci.org/CloudUnder/mac-signature-installer.svg?branch=master)](https://travis-ci.org/CloudUnder/mac-signature-installer)
+[![npm version](https://badge.fury.io/js/mac-signature-installer.svg)](https://badge.fury.io/js/mac-signature-installer)
+
 This repository contains a shell script (Bash), which should make it easier
 for Mac users to install custom email signatures in the Mail.app.
 
