@@ -1,8 +1,7 @@
-// const assert = require('chai').assert;
 const expect = require('chai').expect;
-
-// var assert = require('assert');
 const _ = require('../lib/bundle');
+
+const packageVersion = process.env.npm_package_version || require('../package.json')['version'];
 
 
 describe('macSignatureInstaller()', function () {
@@ -18,6 +17,10 @@ describe('macSignatureInstaller()', function () {
 
 		it('should return a non-empty string', function () {
 			expect(result).to.be.a('string').which.is.not.empty;
+		});
+
+		it('should contain the version number of the package', function () {
+			expect(result).to.have.string('\nVersion ' + packageVersion + ' - Copyright');
 		});
 	});
 

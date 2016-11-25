@@ -25,7 +25,7 @@ clear
 cat << EOM
 --------------------------------------------------------------------------------
 Email Signature Installer for Mail.app (macOS)
-Version 0.1.1 - Copyright (c) 2016 Cloud Under Ltd
+Version 0.1.2 - Copyright (c) 2016 Cloud Under Ltd
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
