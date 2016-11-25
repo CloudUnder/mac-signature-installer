@@ -158,7 +158,7 @@ fi
 
 if [ ${IS_RICH} -ne 1 ]; then
 	# Signature is not flagged as "rich"
-	echo "Please make sure that you have enabled rich email messages in the preferences of the Mail app before you try again."
+	echo "Please UNCHECK the checkbox \"Always match my default message font\" for the signature \"${SIGNATURE_NAME}\", close the preferences window of Mail and then try again."
 	exit 7
 fi
 
