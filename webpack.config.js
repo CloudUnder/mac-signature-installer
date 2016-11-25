@@ -24,10 +24,7 @@ const config = {
 	},
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin({
-			// compress: true,
 			mangle: true,
-			// beautify: true,
-			// comments: false,
 			sourcemap: false,
 		}),
 	]

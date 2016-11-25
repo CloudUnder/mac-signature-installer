@@ -25,7 +25,7 @@ clear
 cat << EOM
 --------------------------------------------------------------------------------
 Email Signature Installer for Mail.app (macOS)
-Version 0.1.0 - Copyright (c) 2016 Cloud Under Ltd
+Version 0.1.1 - Copyright (c) 2016 Cloud Under Ltd
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -75,7 +75,7 @@ if [ -z "${RAW_SIGNATURE}" ]; then
 fi
 
 
-if ! grep -q "Mime-Version: 1.0" <<< "${RAW_SIGNATURE}"; then
+if ! grep -q -E "^Mime-Version: 1.0" <<< "${RAW_SIGNATURE}"; then
 	echo "The file provided does not seem to be a signature file."
 	exit 2
 fi
