@@ -1,6 +1,6 @@
 {
   "name": "mac-signature-installer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Script helping to install HTML email signatures in Mail.app on macOS",
   "main": "lib/bundle.js",
   "scripts": {
