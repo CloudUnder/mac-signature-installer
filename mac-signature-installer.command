@@ -133,7 +133,9 @@ while [ -z "${SIG_DATA}" ]; do
 		fi
 		INDEX=$((${INDEX} + 1))
 	done
-	echo "Could not find a signature with the name \"${SIGNATURE_NAME}\". Please double-check the spelling and try again."
+	if [ -z "${SIG_DATA}" ]; then
+		echo "Could not find a signature with the name \"${SIGNATURE_NAME}\". Please double-check the spelling and try again."
+	fi
 done
 
 
