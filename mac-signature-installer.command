@@ -55,7 +55,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 EOM
 echo -e "${NC}"
 
-
 if [ "$(sw_vers -productName)" != "Mac OS X" ]; then
 	echo "This installer is only compatible with Mail for Mac OS X or macOS."
 	exit 4
@@ -72,7 +71,6 @@ if [ "${OS_X_VERSION}" -gt "12" ]; then
 	echo ""
 fi
 
-
 if [ -z "${RAW_SIGNATURE}" ]; then
 	SIGNATURE_FILE="$1"
 
@@ -85,12 +83,10 @@ if [ -z "${RAW_SIGNATURE}" ]; then
 	RAW_SIGNATURE=$(<"${SIGNATURE_FILE}")
 fi
 
-
 if ! grep -q -E "^Mime-Version: 1.0" <<< "${RAW_SIGNATURE}"; then
 	echo -e "${TAG_ERROR} The file provided does not seem to be a signature file."
 	exit 2
 fi
-
 
 V="4"
 MAIL_DIR="${HOME}/Library/Mail/V${V}/MailData/Signatures"
@@ -118,11 +114,8 @@ if [ ! -x "/usr/libexec/PlistBuddy" ]; then
 	exit 4
 fi
 
-
-echo -e "${TAG_INFO} You can cancel this installer at any time by pressing Ctrl + C or by closing the Terminal window."
-echo ""
-echo "Please open the Mail app, go to the app's preferences (Cmd + ,) and select the \"Signatures\" tab. Find a signature you want to replace or add a new signature by clicking the [+] button and give it a unique name. Don't change the signature itself, but make sure the checkbox \"Always match my default message font\" is NOT checked."
-echo ""
+echo -e "${TAG_INFO} You can cancel this installer at any time by pressing Ctrl + C or by closing the Terminal window.\n"
+echo -e "Please open the Mail app, go to the app's preferences (Cmd + ,) and select the \"Signatures\" tab. Find a signature you want to replace or add a new signature by clicking the [+] button and give it a unique name. Don't change the signature itself, but make sure the checkbox \"Always match my default message font\" is NOT checked.\n"
 echo "Please enter the name of the signature you want to replace and press Enter."
 SIG_DATA=""
 while [ -z "${SIG_DATA}" ]; do
@@ -171,13 +164,10 @@ if [ ${IS_RICH} -ne 1 ]; then
 	exit 7
 fi
 
-
 `killall -d "Mail" &> /dev/null`
 let "MAIL_IS_RUNNING = ! $?"
 if [ ${MAIL_IS_RUNNING} -eq 1 ]; then
-	echo ""
-	echo ""
-	echo -ne "${PURPLE}Please quit the Mail app now.${NC} I'll wait (you can still cancel with Ctrl + C)"
+	echo -ne "\n\n${PURPLE}Please quit the Mail app now.${NC} I'll wait (you can still cancel with Ctrl + C)"
 	while [ ${MAIL_IS_RUNNING} -eq 1 ]; do
 		echo -n "."
 		sleep 1
@@ -186,18 +176,16 @@ if [ ${MAIL_IS_RUNNING} -eq 1 ]; then
 	done
 fi
 
-
-echo "${RAW_SIGNATURE}" > "${SYSTEM_SIG_FILE}"
+cat > "${SYSTEM_SIG_FILE}" <<< "${RAW_SIGNATURE}"
 if [ $? -ne 0 ]; then
 	echo -e "${TAG_ERROR} I was unable to install the signature file. Please make sure signature files are not locked. If you contact support, please quote error number 8."
 	exit 8
 fi
 
-
 if [ ! -z "${CLOUD_DIR}" ]; then
 	CLOUD_SIG_FILE="${CLOUD_DIR}/${SIG_ID}.mailsignature"
 	if [ -f "${CLOUD_SIG_FILE}" ]; then
-		echo "${RAW_SIGNATURE}" > "${CLOUD_SIG_FILE}"
+		cat > "${CLOUD_SIG_FILE}" <<< "${RAW_SIGNATURE}"
 		if [ $? -ne 0 ]; then
 			echo -e "${TAG_ERROR} I was unable to install the signature file for iCloud. Please make sure signature files are not locked. If you contact support, please quote error number 9."
 			exit 9
@@ -205,8 +193,4 @@ if [ ! -z "${CLOUD_DIR}" ]; then
 	fi
 fi
 
-
-echo ""
-echo ""
-echo -e "${TAG_SUCCESS} All done. Please start the Mail app and check if the signature with the name \"${SIGNATURE_NAME}\" has been updated correctly."
-echo ""
+echo -e "\n\n${TAG_SUCCESS} All done. Please start the Mail app and check if the signature with the name \"${SIGNATURE_NAME}\" has been updated correctly.\n\n"
