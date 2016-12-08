@@ -32,7 +32,7 @@ TAG_ERROR="${RED}[Error]${NC}"
 TAG_WARNING="${YELLOW}[Warning]${NC}"
 TAG_SUCCESS="${GREEN}[Success]${NC}"
 TAG_INFO="${CYAN}[Info]${NC}"
-UNLUCKY_MESSAGE="This could be because your using macOS newer than 10.12.x (Sierra) and may not be supported by this version of the installer. The signature must be installed differently."
+UNLUCKY_MESSAGE="The signature may have to be installed differently."
 
 # ------------------------------------------------------------------------------
 read -r -d '' RAW_SIGNATURE << EndOfStaticRawSignature
