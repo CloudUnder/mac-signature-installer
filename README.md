@@ -15,11 +15,7 @@ a fairly easy way to install email signatures.
 > The script expects that you already have a `.mailsignature` file ready to
 be installed. This script does not create or convert the signature itself.
 
-Please be aware that this script has not been tested very much yet and so far
-only on macOS 10.12 (Sierra). In theory it should also work for some older
-versions. Although the script should be pretty safe to use, use at your
-own risk and as always make sure to have a backup of your data. Let us know
-if it works for you.
+Please be aware that this script has not been tested too much. In theory it should also work for some older versions. Although the script should be pretty safe to use, use at your own risk and as always make sure to have a backup of your data. Let us know if it works for you.
 
 
 ## How it works
@@ -90,5 +86,6 @@ const shellScript = macSignatureInstaller(mailsignature);
 
 ### 0.2.0
 
+- Make installer compatible with macOS 10.13 "High Sierra".
 - If signature does not contain the `Mime-Version: 1.0` header, the necessary MIME headers will be generated automatically.
 - You can now set `FIXED_SIGNATURE_NAME` in the installer script to hard-code a name for the signature. The user will then not be asked to enter the name of the signature.
