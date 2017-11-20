@@ -35,6 +35,8 @@ TAG_INFO="${CYAN}[Info]${NC}"
 UNLUCKY_MESSAGE="The signature may have to be installed differently."
 
 # ------------------------------------------------------------------------------
+FIXED_SIGNATURE_NAME=""
+# ------------------------------------------------------------------------------
 read -r -d '' RAW_SIGNATURE << EndOfStaticRawSignature
 EndOfStaticRawSignature
 # ------------------------------------------------------------------------------
@@ -43,7 +45,7 @@ clear
 echo -ne "${GREY}"
 cat << EOM
 Email Signature Installer for Mail.app (macOS)
-Version 0.2.0 - Copyright (c) 2017 Cloud Under Ltd
+Version 0.2.1 - Copyright (c) 2017 Cloud Under Ltd
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -131,12 +133,20 @@ if [ ! -x "/usr/libexec/PlistBuddy" ]; then
 fi
 
 echo -e "${TAG_INFO} You can cancel this installer at any time by pressing Ctrl + C or by closing the Terminal window.\n"
-echo -e "Please open the Mail app, go to the app's preferences (Cmd + ,) and select the \"Signatures\" tab. Find a signature you want to replace or add a new signature by clicking the [+] button and give it a unique name. Don't change the signature itself, but make sure the checkbox \"Always match my default message font\" is NOT checked.\n"
-echo "Please enter the name of the signature you want to replace and press Enter."
+
+if [ -z "${FIXED_SIGNATURE_NAME}" ]; then
+	echo -e "Please open the Mail app, go to the app's preferences (Cmd + ,) and select the \"Signatures\" tab. Find a signature you want to replace or add a new signature by clicking the [+] button and give it a unique name. Don't change the signature itself, but make sure the checkbox \"Always match my default message font\" is NOT checked.\n"
+	echo "Please enter the name of the signature you want to replace and press Enter."
+fi
+
 SIG_DATA=""
 while [ -z "${SIG_DATA}" ]; do
-	echo -ne "${PURPLE}Signature name:${NC} "
-	read SIGNATURE_NAME
+	if [ -z "${FIXED_SIGNATURE_NAME}" ]; then
+		echo -ne "${PURPLE}Signature name:${NC} "
+		read SIGNATURE_NAME
+	else
+		SIGNATURE_NAME="${FIXED_SIGNATURE_NAME}"
+	fi
 	INDEX=0
 	EXIT_CODE="0"
 	SIG_DATA=""
@@ -152,7 +162,14 @@ while [ -z "${SIG_DATA}" ]; do
 		INDEX=$((${INDEX} + 1))
 	done
 	if [ -z "${SIG_DATA}" ]; then
-		echo -e "${TAG_WARNING} Could not find a signature with the name \"${SIGNATURE_NAME}\". Please double-check the spelling and try again."
+		if [ -z "${FIXED_SIGNATURE_NAME}" ]; then
+			echo -e "${TAG_WARNING} Could not find a signature with the name \"${SIGNATURE_NAME}\". Please double-check the spelling and try again."
+		else
+			echo -e "${TAG_WARNING} Could not find a signature with the name \"${SIGNATURE_NAME}\"."
+			echo -e "Please open the Mail app, go to the app's preferences (Cmd + ,) and select the \"Signatures\" tab. Add a new signature by clicking the [+] button and name it \"${CYAN}${SIGNATURE_NAME}${NC}\". Don't change the signature itself, but make sure the checkbox \"Always match my default message font\" is NOT checked."
+			echo -ne "${PURPLE}When you're ready, press Enter to try again...${NC} "
+			read
+		fi
 	fi
 done
 
@@ -178,6 +195,12 @@ if [ ${IS_RICH} -ne 1 ]; then
 	# Signature is not flagged as "rich"
 	echo -e "${TAG_ERROR} Please UNCHECK the checkbox \"Always match my default message font\" for the signature \"${SIGNATURE_NAME}\", close the preferences window of Mail and then try again."
 	exit 7
+fi
+
+if [ ! -z "${FIXED_SIGNATURE_NAME}" ]; then
+	echo -e "\n\n${TAG_WARNING} If you continue now, the signature named \"${SIGNATURE_NAME}\" will be replaced with a new signature!"
+	echo -ne "${PURPLE}Press Enter to continue...${NC} "
+	read
 fi
 
 `killall -d "Mail" &> /dev/null`
