@@ -45,7 +45,7 @@ clear
 echo -ne "${GREY}"
 cat << EOM
 Email Signature Installer for Mail.app (macOS)
-Version 0.2.1 - Copyright (c) 2017 Cloud Under Ltd
+Version 0.2.0 - Copyright (c) 2017 Cloud Under Ltd
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -68,8 +68,8 @@ if [ "$(sw_vers -productVersion | awk -F '.' '{print $1}')" != "10" ]; then
 fi
 
 OS_X_VERSION=$(sw_vers -productVersion | awk -F '.' '{print $2}')
-if [ "${OS_X_VERSION}" -gt "12" ]; then
-	echo -e "${TAG_WARNING} You are using this installer on macOS newer than 10.12 (Sierra), the version this installer was made for. It may or may not still work."
+if [ "${OS_X_VERSION}" -gt "13" ]; then
+	echo -e "${TAG_WARNING} You are using this installer on macOS newer than 10.13 (High Sierra), the version this installer was made for. It may or may not still work."
 	echo ""
 fi
 
@@ -106,26 +106,27 @@ $(perl -MMIME::QuotedPrint -pe '$_=MIME::QuotedPrint::encode($_);' <<< "${RAW_SI
 EndOfFormattedSignature
 fi
 
-V="4"
+V="5"
 MAIL_DIR="${HOME}/Library/Mail/V${V}/MailData/Signatures"
 if [ ! -d "${MAIL_DIR}" ] || [ ! -f "${MAIL_DIR}/AllSignatures.plist" ]; then
-	V="3"
+	V="4"
 	MAIL_DIR="${HOME}/Library/Mail/V${V}/MailData/Signatures"
 	if [ ! -d "${MAIL_DIR}" ] || [ ! -f "${MAIL_DIR}/AllSignatures.plist" ]; then
-		V="2"
+		V="3"
 		MAIL_DIR="${HOME}/Library/Mail/V${V}/MailData/Signatures"
 		if [ ! -d "${MAIL_DIR}" ] || [ ! -f "${MAIL_DIR}/AllSignatures.plist" ]; then
-			echo -e "${TAG_ERROR} I was unable to find your MailData directory on your system. ${UNLUCKY_MESSAGE}"
-			exit 3
+			V="2"
+			MAIL_DIR="${HOME}/Library/Mail/V${V}/MailData/Signatures"
+			if [ ! -d "${MAIL_DIR}" ] || [ ! -f "${MAIL_DIR}/AllSignatures.plist" ]; then
+				echo -e "${TAG_ERROR} I was unable to find your MailData directory on your system. ${UNLUCKY_MESSAGE}"
+				exit 3
+			fi
 		fi
 	fi
 fi
 ALL_SIG_FILE="${MAIL_DIR}/AllSignatures.plist"
 
-CLOUD_DIR="${HOME}/Library/Mobile Documents/com~apple~mail/Data/V${V}/Signatures"
-if [ ! -d "${CLOUD_DIR}" ] || [ ! -f "${CLOUD_DIR}/AllSignatures.plist" ]; then
-	CLOUD_DIR=""
-fi
+
 
 if [ ! -x "/usr/libexec/PlistBuddy" ]; then
 	echo -e "${TAG_ERROR} A system utility required by this installer could not be found. ${UNLUCKY_MESSAGE}"
@@ -219,6 +220,24 @@ cat > "${SYSTEM_SIG_FILE}" <<< "${RAW_SIGNATURE}"
 if [ $? -ne 0 ]; then
 	echo -e "${TAG_ERROR} I was unable to install the signature file. Please make sure signature files are not locked. If you contact support, please quote error number 8."
 	exit 8
+fi
+
+CLOUD_V="5"
+CLOUD_DIR="${HOME}/Library/Mobile Documents/com~apple~mail/Data/V${CLOUD_V}/Signatures"
+if [ ! -d "${CLOUD_DIR}" ] || [ ! -f "${CLOUD_DIR}/AllSignatures.plist" ]; then
+	CLOUD_V="4"
+	CLOUD_DIR="${HOME}/Library/Mobile Documents/com~apple~mail/Data/V${CLOUD_V}/Signatures"
+	if [ ! -d "${CLOUD_DIR}" ] || [ ! -f "${CLOUD_DIR}/AllSignatures.plist" ]; then
+		CLOUD_V="3"
+		CLOUD_DIR="${HOME}/Library/Mobile Documents/com~apple~mail/Data/V${CLOUD_V}/Signatures"
+		if [ ! -d "${CLOUD_DIR}" ] || [ ! -f "${CLOUD_DIR}/AllSignatures.plist" ]; then
+			CLOUD_V="2"
+			CLOUD_DIR="${HOME}/Library/Mobile Documents/com~apple~mail/Data/V${CLOUD_V}/Signatures"
+			if [ ! -d "${CLOUD_DIR}" ] || [ ! -f "${CLOUD_DIR}/AllSignatures.plist" ]; then
+				CLOUD_DIR=""
+			fi
+		fi
+	fi
 fi
 
 if [ ! -z "${CLOUD_DIR}" ]; then
