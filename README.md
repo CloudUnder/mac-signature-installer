@@ -84,3 +84,11 @@ const mailsignature = '...'; // You have to provide this
 const shellScript = macSignatureInstaller(mailsignature);
 // You may then e.g. write the content (string) to disk.
 ```
+
+
+## Change Log
+
+### 0.2.0
+
+- If signature does not contain the `Mime-Version: 1.0` header, the necessary MIME headers will be generated automatically.
+- You can now set `FIXED_SIGNATURE_NAME` in the installer script to hard-code a name for the signature. The user will then not be asked to enter the name of the signature.
