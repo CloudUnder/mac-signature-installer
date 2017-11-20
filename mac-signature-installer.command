@@ -1,7 +1,7 @@
 #!/bin/bash
 # --------------------------------------------------------------------------------
 # The MIT License (MIT)
-# Copyright (c) 2016 Cloud Under Ltd (https://cloudunder.io)
+# Copyright (c) 2016-2017 Cloud Under Ltd (https://cloudunder.io)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -43,7 +43,7 @@ clear
 echo -ne "${GREY}"
 cat << EOM
 Email Signature Installer for Mail.app (macOS)
-Version 0.1.3 - Copyright (c) 2016 Cloud Under Ltd
+Version 0.2.0 - Copyright (c) 2017 Cloud Under Ltd
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -76,7 +76,7 @@ if [ -z "${RAW_SIGNATURE}" ]; then
 
 	if [ -z "${SIGNATURE_FILE}" ] || [ ! -f "${SIGNATURE_FILE}" ]; then
 		echo -e "${TAG_ERROR} Signature file not found. Please provide the filename of the signature file as first argument. Example:"
-		echo "./mac-installer.sh ~/Downloads/filename.mailsignature"
+		echo "./mac-installer.command ~/Downloads/filename.mailsignature"
 		exit 1
 	fi
 
@@ -84,8 +84,24 @@ if [ -z "${RAW_SIGNATURE}" ]; then
 fi
 
 if ! grep -q -E "^Mime-Version: 1.0" <<< "${RAW_SIGNATURE}"; then
-	echo -e "${TAG_ERROR} The file provided does not seem to be a signature file."
-	exit 2
+	if ! grep -q -E "</body>" <<< "${RAW_SIGNATURE}"; then
+		echo -e "${TAG_ERROR} The file provided seems to be neither a signature nor a HTML file."
+		exit 2
+	fi
+
+	echo -e "${TAG_INFO} Converting signature into MIME format."
+	MESSAGE_HASH=$(openssl dgst -sha1 <<< "${RAW_SIGNATURE}" | tr '[:lower:]' '[:upper:]')
+	MESSAGE_ID="07FBF600-${MESSAGE_HASH:0:4}-${MESSAGE_HASH:4:4}-${MESSAGE_HASH:8:4}-${MESSAGE_HASH:12:12}"
+	read -r -d '' RAW_SIGNATURE << EndOfFormattedSignature
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=utf-8
+Message-Id: <${MESSAGE_ID}>
+Mime-Version: 1.0
+
+$(perl -MMIME::QuotedPrint -pe '$_=MIME::QuotedPrint::encode($_);' <<< "${RAW_SIGNATURE}")
+
+EndOfFormattedSignature
 fi
 
 V="4"
@@ -154,7 +170,7 @@ fi
 
 if [ ! -f "${SYSTEM_SIG_FILE}" ]; then
 	# Signature file not found
-	echo -e "${TAG_ERROR} Please contact support and quote error number 6. ${UNLUCKY_MESSAGE}"
+	echo -e "${TAG_ERROR} If your signature \"${SIGNATURE_NAME}\" is empty, please enter a few random letters and try again. If that doesn't help, please contact support and quote error number 6. ${UNLUCKY_MESSAGE}"
 	exit 6
 fi
 
